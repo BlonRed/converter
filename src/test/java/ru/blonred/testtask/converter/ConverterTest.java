@@ -9,12 +9,18 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class ConverterTest {
     final String s = System.lineSeparator();
+    private ByteArrayOutputStream outputStream;
     Converter temp = new Converter();
+
+    void recordTextFromConsole() {
+        outputStream = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(outputStream));
+    }
 
     @Test
     void test1ProcessInput() {
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        System.setOut(new PrintStream(outputStream));
+        recordTextFromConsole();
+
         String expectedOutput = "3,00 kg = 3000,00 g" + s;
         temp.processInput("1 kg = 1000 g");
         temp.processInput("3 kg = ? g");
@@ -25,8 +31,8 @@ class ConverterTest {
 
     @Test
     void test2ProcessInput() {
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        System.setOut(new PrintStream(outputStream));
+        recordTextFromConsole();
+
         String expectedOutput = "Invalid input: 1kg = 1000g" + s;
         temp.processInput("1kg = 1000g");
 
@@ -35,8 +41,8 @@ class ConverterTest {
 
     @Test
     void test3ProcessInput() {
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        System.setOut(new PrintStream(outputStream));
+        recordTextFromConsole();
+
         String expectedOutput = "Invalid number: One" + s;
         temp.processInput("One kg = 1000 g");
 
@@ -45,12 +51,12 @@ class ConverterTest {
 
     @Test
     void testRecordProcessingAndQueryProcessing() {
-        String[] str1 = {"1000","kg","=","1","t"};
+        String[] str1 = {"1000", "kg", "=", "1", "t"};
         temp.recordProcessing(str1);
 
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        System.setOut(new PrintStream(outputStream));
-        String[] str2 = {"5","t","=","?","kg"};
+        recordTextFromConsole();
+
+        String[] str2 = {"5", "t", "=", "?", "kg"};
         temp.queryProcessing(str2);
 
         String expectedOutput = "5,00 t = 5000,00 kg" + s;
@@ -60,9 +66,9 @@ class ConverterTest {
 
     @Test
     void test1QueryProcessing() {
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        System.setOut(new PrintStream(outputStream));
-        String[] str = {"5","cat","=","?","dog"};
+        recordTextFromConsole();
+
+        String[] str = {"5", "cat", "=", "?", "dog"};
         temp.queryProcessing(str);
 
         String expectedOutput = "Conversion not possible." + s;
@@ -72,8 +78,8 @@ class ConverterTest {
 
     @Test
     void test2QueryProcessing() {
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        System.setOut(new PrintStream(outputStream));
+        recordTextFromConsole();
+
         String[] str = {"1", "null", "null", "1", "null"};
         temp.queryProcessing(str);
 
@@ -84,7 +90,7 @@ class ConverterTest {
 
     @Test
     void test1Convert() {
-        String[] str = {"1000","kg","=","1","t"};
+        String[] str = {"1000", "kg", "=", "1", "t"};
 
         String expected = "2,00 t = 2000,00 kg";
 
@@ -95,7 +101,7 @@ class ConverterTest {
 
     @Test
     void test2Convert() {
-        String[] str = {"1000","kg","=","1","t"};
+        String[] str = {"1000", "kg", "=", "1", "t"};
 
         String expected = "5,00 t = 5,00 t";
 
@@ -106,7 +112,7 @@ class ConverterTest {
 
     @Test
     void test3Convert() {
-        String[] str = {"1000","kg","=","1","t"};
+        String[] str = {"1000", "kg", "=", "1", "t"};
 
         String expected = "Conversion not possible.";
 
@@ -117,8 +123,8 @@ class ConverterTest {
 
     @Test
     void test4Convert() {
-        String[] str1 = {"1000","kg","=","1","t"};
-        String[] str2 = {"1","kg","=","1000","g"};
+        String[] str1 = {"1000", "kg", "=", "1", "t"};
+        String[] str2 = {"1", "kg", "=", "1000", "g"};
 
         String expected = "5,00 t = 5000000,00 g";
 
@@ -140,8 +146,8 @@ class ConverterTest {
 
     @Test
     void test2IsNumber() {
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        System.setOut(new PrintStream(outputStream));
+        recordTextFromConsole();
+
         String str = "string";
         String expectedOutput = "Invalid number: " + str + s;
 
