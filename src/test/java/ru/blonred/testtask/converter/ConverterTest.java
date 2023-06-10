@@ -2,28 +2,34 @@ package ru.blonred.testtask.converter;
 
 import org.junit.jupiter.api.Test;
 
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
+import java.io.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class ConverterTest {
     final String s = System.lineSeparator();
     private ByteArrayOutputStream outputStream;
-    Converter temp = new Converter();
+    Converter converter = new Converter();
 
     void recordTextFromConsole() {
         outputStream = new ByteArrayOutputStream();
         System.setOut(new PrintStream(outputStream));
     }
 
+
     @Test
     void test1ProcessInput() {
         recordTextFromConsole();
 
         String expectedOutput = "3,00 kg = 3000,00 g" + s;
-        temp.processInput("1 kg = 1000 g");
-        temp.processInput("3 kg = ? g");
+        InputDataHandler.processInput("1 kg = 1000 g");
+        InputDataHandler.processInput("3 kg = ? g");
+
+        try {
+            outputStream.close();
+        } catch (IOException exc) {
+            exc.printStackTrace();
+        }
 
         assertEquals(expectedOutput, outputStream.toString());
 
@@ -34,17 +40,29 @@ class ConverterTest {
         recordTextFromConsole();
 
         String expectedOutput = "Invalid input: 1kg = 1000g" + s;
-        temp.processInput("1kg = 1000g");
+        InputDataHandler.processInput("1kg = 1000g");
+
+        try {
+            outputStream.close();
+        } catch (IOException exc) {
+            exc.printStackTrace();
+        }
 
         assertEquals(expectedOutput, outputStream.toString());
     }
 
-    @Test
+    @Test()
     void test3ProcessInput() {
         recordTextFromConsole();
 
         String expectedOutput = "Invalid number: One" + s;
-        temp.processInput("One kg = 1000 g");
+        InputDataHandler.processInput("One kg = 1000 g");
+
+        try {
+            outputStream.close();
+        } catch (IOException exc) {
+            exc.printStackTrace();
+        }
 
         assertEquals(expectedOutput, outputStream.toString());
     }
@@ -52,12 +70,12 @@ class ConverterTest {
     @Test
     void testRecordProcessingAndQueryProcessing() {
         String[] str1 = {"1000", "kg", "=", "1", "t"};
-        temp.recordProcessing(str1);
+        converter.recordProcessing(str1);
 
         recordTextFromConsole();
 
         String[] str2 = {"5", "t", "=", "?", "kg"};
-        temp.queryProcessing(str2);
+        converter.queryProcessing(str2);
 
         String expectedOutput = "5,00 t = 5000,00 kg" + s;
 
@@ -69,7 +87,7 @@ class ConverterTest {
         recordTextFromConsole();
 
         String[] str = {"5", "cat", "=", "?", "dog"};
-        temp.queryProcessing(str);
+        converter.queryProcessing(str);
 
         String expectedOutput = "Conversion not possible." + s;
 
@@ -81,7 +99,7 @@ class ConverterTest {
         recordTextFromConsole();
 
         String[] str = {"1", "null", "null", "1", "null"};
-        temp.queryProcessing(str);
+        converter.queryProcessing(str);
 
         String expectedOutput = "Conversion not possible." + s;
 
@@ -94,9 +112,9 @@ class ConverterTest {
 
         String expected = "2,00 t = 2000,00 kg";
 
-        temp.recordProcessing(str);
+        converter.recordProcessing(str);
 
-        assertEquals(expected, temp.convert(2, str[4], str[1]));
+        assertEquals(expected, converter.convert(2, str[4], str[1]));
     }
 
     @Test
@@ -105,9 +123,9 @@ class ConverterTest {
 
         String expected = "5,00 t = 5,00 t";
 
-        temp.recordProcessing(str);
+        converter.recordProcessing(str);
 
-        assertEquals(expected, temp.convert(5, str[4], str[4]));
+        assertEquals(expected, converter.convert(5, str[4], str[4]));
     }
 
     @Test
@@ -116,9 +134,9 @@ class ConverterTest {
 
         String expected = "Conversion not possible.";
 
-        temp.recordProcessing(str);
+        converter.recordProcessing(str);
 
-        assertEquals(expected, temp.convert(5, "cat", "dog"));
+        assertEquals(expected, converter.convert(5, "cat", "dog"));
     }
 
     @Test
@@ -128,30 +146,29 @@ class ConverterTest {
 
         String expected = "5,00 t = 5000000,00 g";
 
-        temp.recordProcessing(str1);
-        temp.recordProcessing(str2);
+        converter.recordProcessing(str1);
+        converter.recordProcessing(str2);
 
-        assertEquals(expected, temp.convert(5, str1[4], str2[4]));
-    }
-
-    @Test
-    void testAddUnit() {
-        temp.addUnit("cat");
+        assertEquals(expected, converter.convert(5, str1[4], str2[4]));
     }
 
     @Test
     void test1IsNumber() {
-        assertTrue(temp.isNumber("5"));
+        assertTrue(InputDataHandler.isNumber("5"));
     }
 
     @Test
     void test2IsNumber() {
+        assertFalse(InputDataHandler.isNumber("five"));
+    }
+
+    @Test
+    void test3IsNumber() {
         recordTextFromConsole();
 
         String str = "string";
         String expectedOutput = "Invalid number: " + str + s;
-
-        assertFalse(temp.isNumber(str));
+        InputDataHandler.isNumber("string");
         assertEquals(expectedOutput, outputStream.toString());
     }
 }
