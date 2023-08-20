@@ -5,12 +5,18 @@ import ru.blonred.testtask.converter.model.*;
 public class Converter {
     private UnitsContainer unitsContainer;
 
+    public Converter() {
+        unitsContainer = new UnitsContainer();
+    }
     public Converter(UnitsContainer unitsContainer) {
         this.unitsContainer = unitsContainer;
     }
 
     public void setUnitsContainer(UnitsContainer unitsContainer) {
         this.unitsContainer = unitsContainer;
+    }
+    public UnitsContainer getUnitsContainer() {
+        return unitsContainer;
     }
 
     public void processed(String input) {

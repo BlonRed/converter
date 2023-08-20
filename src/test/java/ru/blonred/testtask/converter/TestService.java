@@ -1,5 +1,7 @@
 package ru.blonred.testtask.converter;
 
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import ru.blonred.testtask.converter.model.UnitsContainer;
 
 import java.io.ByteArrayOutputStream;
@@ -22,5 +24,15 @@ public abstract class TestService {
         } catch (IOException exc) {
             exc.printStackTrace();
         }
+    }
+
+    @BeforeEach
+    private void prepare() {
+        recordTextFromConsole();
+    }
+
+    @AfterEach
+    private void after() {
+        closeRecordFromConsole();
     }
 }
